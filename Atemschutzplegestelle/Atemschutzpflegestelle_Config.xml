@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<myData>
+	<Hostname>Michael-PC</Hostname>
+	<Port>3306</Port>
+	<dbName>ffw</dbName>
+	<user>ffwadmin</user>
+	<password>gnidmewff</password>
+	<pdfPfad>C:\temp\ffw\atemschutzpflegestelle\</pdfPfad>
+	<headerPfad>C:\temp\ffw\pic\</headerPfad>
+</myData>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy 5 elements to &apos;Atemschutz_1.8/src/program&apos;&#x0D;&#x0A;- Original project: &apos;Atemschutzplegestelle&apos;&#x0D;&#x0A;- Destination element: &apos;Atemschutz_1.8/src/program&apos;&#x0D;&#x0A;- Original elements:&#x0D;&#x0A;     program.myHilfe.java&#x0D;&#x0A;     program.myKorrektur.java&#x0D;&#x0A;     program.Main.java&#x0D;&#x0A;     program.mySonstiges.java&#x0D;&#x0A;     program.SWTResourceManager.java" description="Copy compilation units" destination="=Atemschutz_1.8/src&lt;program" element1="/src&lt;program{myHilfe.java" element2="/src&lt;program{myKorrektur.java" element3="/src&lt;program{Main.java" element4="/src&lt;program{mySonstiges.java" element5="/src&lt;program{SWTResourceManager.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1640628868687" units="5" version="1.0"/>
+</session>

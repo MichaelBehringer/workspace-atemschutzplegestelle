@@ -1,0 +1,218 @@
+package program;
+
+import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+
+public class Jahresauswertung extends Dialog {
+
+	protected Object result;
+	protected Shell shell;
+	private String connectionString = "";
+	private String myModus = "";
+	private Text txtEingabe;
+	public Connection dbConnect = null;
+	public ResultSet myResult = null;
+	public String pdfname = "";
+	public String sqlStatement = "";
+	public String headerPfad = "";
+	public String xmlPdfPfad = "";
+	
+	public String getConnectionString() {
+		return connectionString;
+	}
+	public void setConnectionString(String ConnectionString) {
+		connectionString = ConnectionString;
+	}
+	
+	public String getModus() {
+		return myModus;
+	}
+	public void setModus(String MyModus) {
+		myModus = MyModus;
+	}
+	public String getXmlPdfPfad() {
+		return xmlPdfPfad;
+	}
+	public void setXmlPdfPfad(String XmlPdfPfad) {
+		xmlPdfPfad = XmlPdfPfad;
+	}
+	public String getHeaderPfad() {
+		return headerPfad;
+	}
+	public void setHeaderPfad(String HeaderPfad) {
+		headerPfad = HeaderPfad;
+	}
+
+	/**
+	 * Create the dialog.
+	 * @param parent
+	 * @param style
+	 */
+	public Jahresauswertung(Shell parent, int style) {
+		super(parent, style);
+		setText("SWT Dialog");
+	}
+
+	/**
+	 * Open the dialog.
+	 * @return the result
+	 */
+	public Object open() {
+		createContents();
+		shell.open();
+		shell.layout();
+		Display display = getParent().getDisplay();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Create contents of the dialog.
+	 */
+	private void createContents() {
+		shell = new Shell(getParent(), SWT.SHELL_TRIM | SWT.BORDER | SWT.SYSTEM_MODAL);
+		shell.setSize(433, 81);
+		shell.setText(getText());
+		
+		Label lblJahreszahl = new Label(shell, SWT.NONE);
+		lblJahreszahl.setBounds(10, 11, 63, 15);
+		lblJahreszahl.setText("Jahreszahl:");
+		
+		txtEingabe = new Text(shell, SWT.BORDER);
+		txtEingabe.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent e) 
+			{
+				if(txtEingabe.getText().length()==0) {}
+				else
+				{
+					try
+					{
+						Integer.parseInt(txtEingabe.getText());
+					}
+					catch (NumberFormatException exc)
+					{
+						messageBox("Bitte nur die Jahreszahlen eingeben","Eingabe-Fehler",shell);
+						txtEingabe.setText("");
+						txtEingabe.setFocus();
+					}
+				}
+			}
+		});
+		txtEingabe.setBounds(79, 9, 100, 21);
+		
+		Button btnErzeugen = new Button(shell, SWT.NONE);
+		btnErzeugen.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) 
+			{
+				if (txtEingabe.getText().length()!=4)
+				{
+					messageBox("Bitte die Jahreszahl eingeben. z.B. 2022","Eingabe-Fehler",shell);
+				}
+				else
+				{
+					try
+					{
+						Date datumZeit = new Date();
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+						String aktDatumZeit = sdf.format(datumZeit);
+						
+						
+						if(getModus().equals("Feuerwehr"))
+						{
+							System.out.println("here3");
+							dbConnect = DriverManager.getConnection(connectionString);
+							Statement statement = dbConnect.createStatement();
+							myResult = statement.executeQuery("SELECT CITY_NO, CITY_NAME FROM ATEMSCHUTZPFLEGESTELLE_CITIES");
+							while (myResult.next())
+							{
+								pdfname = getXmlPdfPfad()+"Atemschutzpflegestelle"+aktDatumZeit+"_"+myResult.getObject(2).toString().replaceAll("/", "-")+".pdf";
+								
+								sqlStatement = "SELECT p.LASTNAME, c.CITY_NAME, d.FLASCHEN_FUELLEN, d.FLASCHEN_TUEV, d.MASKEN_PRUEFEN, d.MASKEN_REINIGEN, d.LA_PRUEFEN, d.LA_REINIGEN, d.GERAETE_PRUEFEN, d.GERAETE_REINIGEN, d.TIME_WORK, d.DATE_WORK FROM ATEMSCHUTZPFLEGESTELLE_DATA d, ATEMSCHUTZPFLEGESTELLE_CITIES c, PERS p WHERE d.CITY_NO = c.CITY_NO AND d.PERS_NO = p.PERS_NO ";
+								sqlStatement = sqlStatement + " AND c.CITY_NO = "+myResult.getObject(1) + " ";
+								int day_begin = 1;
+								int month_begin = 1;
+								int year_begin = Integer.parseInt(txtEingabe.getText());
+								String date_begin = year_begin + "-" + month_begin + "-" + day_begin;
+								sqlStatement = sqlStatement + " AND d.DATE_WORK >= '"+date_begin+"' ";
+								
+								int day_end = 31;
+								int month_end = 12;
+								int year_end = Integer.parseInt(txtEingabe.getText());
+								String date_end = year_end + "-" + month_end + "-" + day_end;
+								sqlStatement = sqlStatement + " AND d.DATE_WORK <= '"+date_end+"' ";
+								sqlStatement = sqlStatement + " ORDER BY d.DATE_WORK DESC, p.LASTNAME, c.CITY_NAME ";
+								
+								
+								myExport.createPDF(pdfname, "", connectionString.toString(), sqlStatement, myResult.getObject(2).toString(), Integer.parseInt(txtEingabe.getText()), 2);
+							}
+							messageBox("PDFs Erfolgreich erstellt\n"+getXmlPdfPfad(), "Erfolg", shell);
+							shell.close();
+						}
+						else
+						{
+							pdfname = getXmlPdfPfad()+"Atemschutzpflegestelle"+aktDatumZeit+"_Geraetewarte.pdf";
+												
+							myExport.createPDF(pdfname, "", connectionString.toString(), "", "", Integer.parseInt(txtEingabe.getText()), 5);
+							messageBox("PDF Erfolgreich erstellt\n"+getXmlPdfPfad(), "Erfolg", shell);
+							shell.close();
+						}
+					}
+					catch (SQLException sqlexc)
+					{
+						sqlexc.printStackTrace();
+						messageBox("SQL-Feheler", "Fehlermeldung", shell);
+					}
+				}
+			}
+		});
+		btnErzeugen.setBounds(193, 7, 100, 25);
+		btnErzeugen.setText("erzeugen");
+		
+		Button btnAbbrechen = new Button(shell, SWT.NONE);
+		btnAbbrechen.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) 
+			{
+				shell.close();
+			}
+		});
+		btnAbbrechen.setBounds(305, 7, 100, 25);
+		btnAbbrechen.setText("abbrechen");
+
+	}
+	
+	public static void messageBox(String msg, String title, Shell myShell)
+	{
+		MessageBox msgBox = new MessageBox(myShell);
+		msgBox.setMessage(msg);
+		msgBox.setText(title);
+		msgBox.open();
+	}
+	
+	
+}

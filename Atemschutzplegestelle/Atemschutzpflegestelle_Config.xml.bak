@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<myData>
+	<Hostname>Valeo-Laptop-17</Hostname>
+	<Port>3306</Port>
+	<dbName>ffwback</dbName>
+	<user>ffwadmin</user>
+	<password>gnidmewff</password>
+	<pdfPfad>C:\temp\ffw\atemschutzpflegestelle\</pdfPfad>
+	<headerPfad>C:\temp\ffw\pic\</headerPfad>
+	<mySqlDumpPfad>C:\xampp\mysql\bin\mysqldump</mySqlDumpPfad>
+	<backupPfad>C:\temp\</backupPfad>
+	<activeBackup>J</activeBackup>
+</myData>

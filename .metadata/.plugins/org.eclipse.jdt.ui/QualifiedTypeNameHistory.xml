@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="java.sql.ResultSet"/>
+    <fullyQualifiedTypeName name="org.eclipse.swt.layout.GridData"/>
+    <fullyQualifiedTypeName name="java.awt.Point"/>
+    <fullyQualifiedTypeName name="org.eclipse.swt.graphics.Point"/>
+    <fullyQualifiedTypeName name="com.itextpdf.text.pdf.VerticalText"/>
+    <fullyQualifiedTypeName name="com.itextpdf.text.pdf.PdfPageEventHelper"/>
+    <fullyQualifiedTypeName name="com.itextpdf.text.pdf.PdfWriter"/>
+    <fullyQualifiedTypeName name="com.itextpdf.text.pdf.PdfContentByte"/>
+    <fullyQualifiedTypeName name="com.itextpdf.text.Document"/>
+    <fullyQualifiedTypeName name="com.itextpdf.text.Rectangle"/>
+</qualifiedTypeNameHistroy>
